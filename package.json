@@ -1,0 +1,22 @@
+{
+  "name": "nodejs-postgresql",
+  "version": "1.0.0",
+  "description": "Express and PostgreSQL users API with OpenAPI documentation",
+  "main": "server.js",
+  "scripts": {
+    "dev": "node --watch server.js",
+    "start": "node server.js",
+    "validate:docs": "node scripts/validate-swagger.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "pg": "^8.23.0",
+    "swagger-jsdoc": "^6.3.0",
+    "swagger-ui-express": "^5.0.1"
+  }
+}
