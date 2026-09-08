@@ -1,4 +1,5 @@
 const swaggerJSDoc = require("swagger-jsdoc");
+const path = require("path");
 
 const options = {
     failOnErrors: true,
@@ -148,7 +149,10 @@ const options = {
             },
         },
     },
-    apis: ["./server.js", "./router/*.js"],
+    apis: [
+        path.join(__dirname, "../server.js"),
+        path.join(__dirname, "../router/*.js"),
+    ],
 };
 
 module.exports = swaggerJSDoc(options);
