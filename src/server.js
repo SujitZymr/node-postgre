@@ -5,8 +5,32 @@ const swaggerUi = require("swagger-ui-express");
 const usersRouter = require("./router/users.router");
 const pool = require("./config/database");
 const swaggerSpec = require("./config/swagger");
+const cors = require("cors");
 
 const app = express();
+const allowedOrigins = new Set(
+    (process.env.CORS_ORIGINS || "")
+        .split(",")
+        .map((origin) => origin.trim())
+        .filter(Boolean)
+);
+
+app.use(
+    cors({
+        origin: (origin, callback) => {
+            // Allow same-origin and non-browser requests without an Origin header.
+            if (!origin || allowedOrigins.has(origin)) {
+                callback(null, true);
+                return;
+            }
+
+            callback(null, false);
+        },
+        credentials: false,
+    })
+);
+
+app.disable("x-powered-by");
 
 app.use(express.json());
 
@@ -58,19 +82,26 @@ app.use("/users", usersRouter);
  *       '500':
  *         $ref: '#/components/responses/InternalServerError'
  */
+
 app.get("/health", async (req, res) => {
     try {
-        const result = await pool.query("SELECT NOW() AS current_time");
+        await pool.query("SELECT 1");
 
-        res.json({
-            message: "API and database are working",
-            databaseTime: result.rows[0].current_time,
+        return res.status(200).json({
+            status: "healthy",
+            server: "running",
+            database: "connected",
         });
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: "Database connection failed" });
+        return res.status(503).json({
+            status: "unhealthy",
+            server: "running",
+            database: "disconnected",
+            error: error.message,
+        });
     }
 });
+
 
 if (require.main === module) {
     const port = process.env.PORT || 3000;
